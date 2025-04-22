@@ -1,0 +1,9 @@
+package com.libraryproject.main.entity;
+
+ 	
+
+ 
+public interface UserBookCount {
+	  String username;
+	  long bookCount;
+}

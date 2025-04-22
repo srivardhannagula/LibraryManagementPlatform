@@ -1,0 +1,12 @@
+package com.libraryproject.main.repositories;
+
+ 
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+ 
+import com.libraryproject.main.entity.LibraryUser;
+
+public interface UserRepository extends JpaRepository<LibraryUser,String> {
+		 
+}

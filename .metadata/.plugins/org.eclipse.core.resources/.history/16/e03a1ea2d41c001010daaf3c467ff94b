@@ -1,0 +1,121 @@
+package com.libraryproject.main.service;
+ 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.libraryproject.main.entity.Books;
+import com.libraryproject.main.entity.IssuedBooks;
+import com.libraryproject.main.entity.LibraryUser;
+import com.libraryproject.main.entity.Role;
+import com.libraryproject.main.entity.UserBookCount;
+import com.libraryproject.main.repositories.BooksRepository;
+import com.libraryproject.main.repositories.IssuedBooksRepository;
+import com.libraryproject.main.repositories.UserRepository;
+
+@Service
+public class BooksService {
+	@Autowired
+	private BooksRepository booksRepository;
+	
+	@Autowired
+	private UserRepository userRepository;
+	@Autowired
+	private IssuedBooksRepository issuedBooksRepository;
+
+	public void saveBooks(Books books) {
+		booksRepository.save(books);
+		
+	}
+
+
+	public List<Books> getAllBooks() {
+		// TODO Auto-generated method stub
+		return booksRepository.findAll();
+	}
+	public List<Books> getByCategory(String category){
+		return booksRepository.findByCategory(category);
+	}
+	public boolean deleteBookById(Long id) {
+		if(booksRepository.existsById(id)) {
+			booksRepository.deleteById(id);
+			return true;
+		}
+		return false;
+	}
+	public Books increaseNoOfBooks(Long id) {
+		Books books=booksRepository.getById(id);
+		System.out.println(books.getAuthorName()+" sesrvice");
+		int n=books.getBooksAvailable();
+		books.setBooksAvailable(n+1);
+		booksRepository.save(books);
+		return books;
+		
+	}
+	public Books decreaseNoOfBooks(Long id) {
+		Books books=booksRepository.getById(id);
+		if(books.getBooksAvailable()==0) {
+			return books;
+		}
+		 books.setBooksAvailable(books.getBooksAvailable()-1);
+		 booksRepository.save(books);
+		return books ;
+	}
+
+
+	public List<Books> getBooks( ) {
+		  
+		return booksRepository.findAll();
+	}
+
+
+	public List<Books> searchBooks(String query) {
+		 
+		return booksRepository.findByBookTitleContainingIgnoreCaseOrAuthorNameContainingIgnoreCase(query, query);
+	}
+	public ResponseEntity<?> issueBooksService(String usernname,Long bookId)
+	{	Optional<LibraryUser> userOptional=userRepository.findByUsername(usernname);
+		Optional<Books> bookOptional=booksRepository.findById(bookId);
+		if(userOptional.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
+		}
+
+		if(bookOptional.isEmpty()||bookOptional.get().getBooksAvailable()<=0) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Books not found");
+		}
+		Books book=bookOptional.get();
+		book.setBooksAvailable(book.getBooksAvailable()-1);
+		booksRepository.save(book);
+		IssuedBooks issuedBooks=new IssuedBooks();
+		issuedBooks.setBookId(bookId);
+		issuedBooks.setUserName(usernname);
+		issuedBooks.setBookTitle(book.getBookTitle());
+		issuedBooks.setTookDate(new Date());
+		Calendar calendar=Calendar.getInstance();
+		calendar.add(Calendar.DAY_OF_MONTH, 14);
+		issuedBooks.setReturnDate(calendar.getTime());
+		issuedBooksRepository.save(issuedBooks);
+		return ResponseEntity.ok("Book issued Succesfully");
+				
+	}
+
+
+	public List<IssuedBooks> issueAllBooksService() {
+		// TODO Auto-generated method stub
+		return issuedBooksRepository.findAll();
+		
+	}
+
+
+	public  List<UserBookCount> getUsers() {
+		// TODO Auto-generated method stub
+		return  issuedBooksRepository.findNumberOfIssuedBooksForUser();
+	}
+	
+}

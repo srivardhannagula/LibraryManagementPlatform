@@ -1,0 +1,14 @@
+package com.libraryproject.main.repositories;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import com.libraryproject.main.entity.IssuedBooks;
+import com.libraryproject.main.entity.UserBookCount;
+
+public interface IssuedBooksRepository extends JpaRepository<IssuedBooks, Long> {
+	@Query("SELECT userName,COUNT(userName) as BookCount FROM IssuedBooks GROUP BY userName")
+	List<UserBookCount> findNumberOfIssuedBooksForUser();
+}

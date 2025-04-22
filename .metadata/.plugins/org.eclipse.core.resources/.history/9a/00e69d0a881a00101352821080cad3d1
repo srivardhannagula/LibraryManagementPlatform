@@ -1,0 +1,67 @@
+package com.libraryproject.main.service;
+ 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+ 
+
+import com.libraryproject.main.entity.Books;
+import com.libraryproject.main.repositories.BooksRepository;
+
+@Service
+public class BooksService {
+	@Autowired
+	private BooksRepository booksRepository;
+	
+
+	public void saveBooks(Books books) {
+		booksRepository.save(books);
+		
+	}
+
+
+	public List<Books> getAllBooks() {
+		// TODO Auto-generated method stub
+		return booksRepository.findAll();
+	}
+	public List<Books> getByCategory(String category){
+		return booksRepository.findByCategory(category);
+	}
+	public boolean deleteBookById(Long id) {
+		if(booksRepository.existsById(id)) {
+			booksRepository.deleteById(id);
+			return true;
+		}
+		return false;
+	}
+	public Books increaseNoOfBooks(Long id) {
+		Books books=booksRepository.getById(id);
+		System.out.println(books.getAuthorName()+" sesrvice");
+		int n=books.getBooksAvailable();
+		books.setBooksAvailable(n+1);
+		booksRepository.save(books);
+		return books;
+		
+	}
+	public Books decreaseNoOfBooks(Long id) {
+		Books books=booksRepository.getById(id);
+		if(books.getBooksAvailable()==0) {
+			return books;
+		}
+		 books.setBooksAvailable(books.getBooksAvailable()-1);
+		 booksRepository.save(books);
+		return books ;
+	}
+
+
+	public List<Books> getBooks(int page,int size) {
+		  Pageable pageable=PageRequest.of(page, size);
+		return booksRepository.findAll(pageable);
+	}
+	
+}

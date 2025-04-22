@@ -1,0 +1,15 @@
+package com.libraryproject.main.entity;
+
+import java.time.LocalDate;
+
+import lombok.Data;
+@Data
+public class IssueDTO {
+	private Long bookId;
+	private String userName;
+	private String bookTitle;
+	private LocalDate tookDate;
+	private LocalDate dueDate;
+	private LocalDate returnedDate;
+	private Long fineAmount;
+}

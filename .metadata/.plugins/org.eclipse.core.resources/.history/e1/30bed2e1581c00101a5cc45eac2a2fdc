@@ -1,0 +1,5 @@
+package com.libraryproject.main.entity;
+
+public class UserBookCount {
+
+}

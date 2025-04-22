@@ -1,0 +1,14 @@
+package com.libraryproject.main.repositories;
+
+ 
+
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.libraryproject.main.entity.LibraryUser;
+
+
+public interface UserRepository extends JpaRepository<LibraryUser,String> {
+		 public Optional<LibraryUser> findByUsername(String username);
+}

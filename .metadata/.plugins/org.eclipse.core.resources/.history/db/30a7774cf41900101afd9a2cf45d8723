@@ -1,0 +1,12 @@
+package com.libraryproject.main.repositories;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.libraryproject.main.entity.Books;
+import com.libraryproject.main.entity.LibraryUser;
+
+public interface UserRepository extends JpaRepository<LibraryUser,String> {
+		public List<Books> findByCategory();
+}
