@@ -1,5 +1,5 @@
 import axios from 'axios';
-const instance=axios.create({baseURL:'http://localhost:8080/api'});
+const instance=axios.create({baseURL:'https://libraryplatformbackend-production.up.railway.app/api'});
 instance.interceptors.request.use(
     configure=>{
         const token =localStorage.getItem('token');
